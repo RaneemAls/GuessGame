@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f0f8ff; /* baby blue background */
+            color: #333; /* dark gray text color */
+        }
+
+        h1 {
+            color: #4169e1; /* royal blue for headings */
+        }
+
+        #output {
+            background-color: #add8e6; /* baby blue square */
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        button {
+            background-color: #4169e1; /* royal blue */
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        button:hover {
+            background-color: #1e90ff; /* dodger blue on hover */
+        }
+
+        input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guess the Number Game</h1>
+    <p>Guess a number between 1 and 100:</p>
+    <input type="number" id="userGuess" min="1" max="100">
+    <button onclick="checkGuess()">Submit Guess</button>
+    <div id="output">
+        <p id="message"></p>
+        <p>Remaining attempts: <span id="attempts">10</span></p>
+        <p>Your attempts: <span id="userAttempts"></span></p>
+    </div>
+    <button onclick="newGame()">Start New Game</button>
+
+    <script>
+        let secretNumber, remainingAttempts, userAttempts, isGameStarted;
+
+        function newGame() {
+            isGameStarted = false;
+            remainingAttempts = 10;
+            userAttempts = [];
+
+            document.getElementById("userGuess").disabled = false;
+            document.querySelector("button").disabled = false;
+
+            document.getElementById("message").textContent = "";
+            document.getElementById("message").style.color = "black"; // Reset the color
+            document.getElementById("attempts").textContent = remainingAttempts;
+            document.getElementById("userAttempts").textContent = "";
+        }
+
+        function checkGuess() {
+            if (!isGameStarted) {
+                secretNumber = Math.floor(Math.random() * 100) + 1;
+                isGameStarted = true;
+            }
+
+            const userGuess = parseInt(document.getElementById("userGuess").value);
+            const messageElement = document.getElementById("message");
+            const attemptsElement = document.getElementById("attempts");
+            const userAttemptsElement = document.getElementById("userAttempts");
+
+            messageElement.style.color = "black"; // Reset the color
+
+            if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+                messageElement.textContent = "Please enter a valid number between 1 and 100.";
+            } else {
+                remainingAttempts--;
+                userAttempts.push(userGuess);
+
+                if (userGuess === secretNumber) {
+                    messageElement.textContent = `Congratulations! You guessed the correct number: ${secretNumber}`;
+                    messageElement.style.color = "green";
+                    disableInputAndButton();
+                } else {
+                    messageElement.textContent = `Wrong guess! ${userGuess} is ${userGuess < secretNumber ? 'too low' : 'too high'}. Try again.`;
+                    messageElement.style.color = "red";
+
+                    if (remainingAttempts === 0) {
+                        messageElement.textContent = `Sorry, you've run out of attempts. The correct number was ${secretNumber}.`;
+                        messageElement.style.color = "red";
+                        disableInputAndButton();
+                    }
+                }
+
+                attemptsElement.textContent = remainingAttempts;
+                userAttemptsElement.textContent = userAttempts.join(', ');
+            }
+        }
+
+        function disableInputAndButton() {
+            document.getElementById("userGuess").disabled = true;
+            document.querySelector("button").disabled = true;
+        }
+    </script>
+</body>
+</html>
